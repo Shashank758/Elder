@@ -3,7 +3,8 @@ import { useEcosystem } from '../../context/EcosystemContext';
 import type { AppScreen } from '../../types';
 import {
   LayoutDashboard, Heart, Activity, Pill, Bot, Home,
-  ShieldAlert, Users, FileText, Sparkles, Settings, X, ArrowLeft
+  ShieldAlert, Users, FileText, Sparkles, Settings, X, ArrowLeft,
+  Sun, Moon, LogOut
 } from 'lucide-react';
 
 interface NavItem {
@@ -13,7 +14,11 @@ interface NavItem {
 }
 
 export const Sidebar: React.FC = () => {
-  const { screen, setScreen, triggerFallAlert, mobileMenuOpen, setMobileMenuOpen } = useEcosystem();
+  const {
+    screen, setScreen, triggerFallAlert,
+    mobileMenuOpen, setMobileMenuOpen,
+    darkMode, setDarkMode, speakText, logout, currentUser
+  } = useEcosystem();
 
   const mainNav: NavItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
@@ -98,8 +103,22 @@ export const Sidebar: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Emergency SOS Card Button */}
-        <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800">
+        {/* Bottom: Theme Toggle, SOS, Logout (mobile drawer footer) */}
+        <div className="pt-4 mt-4 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
+          {/* Theme Toggle — mobile-only (hidden on desktop sidebar since header has it) */}
+          <button
+            onClick={() => {
+              const next = !darkMode;
+              setDarkMode(next);
+              speakText(next ? "Dark theme" : "Light theme");
+            }}
+            className="lg:hidden w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center justify-center gap-2 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+          >
+            {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
+            <span>{darkMode ? 'Light Mode' : 'Dark Mode'}</span>
+          </button>
+
+          {/* Emergency SOS */}
           <button
             onClick={() => {
               triggerFallAlert();
@@ -110,6 +129,20 @@ export const Sidebar: React.FC = () => {
             <ShieldAlert className="w-4 h-4 text-rose-500" />
             <span>Emergency SOS</span>
           </button>
+
+          {/* Logout — mobile-only (hidden on desktop sidebar since header has it) */}
+          {currentUser && (
+            <button
+              onClick={() => {
+                logout();
+                setMobileMenuOpen(false);
+              }}
+              className="lg:hidden w-full py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 font-bold text-xs flex items-center justify-center gap-2 hover:bg-rose-50 hover:text-rose-500 dark:hover:bg-rose-500/10 transition-colors"
+            >
+              <LogOut className="w-4 h-4" />
+              <span>Logout ({currentUser.name})</span>
+            </button>
+          )}
         </div>
       </aside>
 

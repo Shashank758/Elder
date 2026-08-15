@@ -17,18 +17,17 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
   } = useEcosystem();
 
   return (
-    <header className="shrink-0 relative z-40 w-full app-header px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 flex items-center justify-between gap-2 sm:gap-4 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-xs">
+    <header className="shrink-0 relative z-40 w-full app-header px-2 sm:px-4 lg:px-8 py-2 sm:py-3 flex items-center justify-between gap-1 sm:gap-3 border-b border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md shadow-xs overflow-hidden">
 
-      {/* Left: Brand Logo & Back Button */}
-      <div className="flex items-center gap-2 shrink-0">
+      {/* Left: Back + Logo (compact on mobile) */}
+      <div className="flex items-center gap-1.5 sm:gap-2 shrink-0 min-w-0">
         {screen !== 'dashboard' && (
           <button
             onClick={() => setScreen('dashboard')}
-            className="p-1.5 sm:p-2 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-1 font-bold text-xs shadow-xs shrink-0"
+            className="p-1.5 rounded-lg sm:rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors shrink-0"
             title="Back to Dashboard"
           >
             <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">Back</span>
           </button>
         )}
 
@@ -39,17 +38,15 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
             else if (role === 'Admin') setScreen('admin');
             else setScreen('dashboard');
           }}
-          className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0"
+          className="flex items-center gap-1.5 sm:gap-2.5 cursor-pointer group shrink-0"
         >
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
             <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </div>
-          <div>
-            <div className="flex items-center gap-1">
-              <span className="text-sm sm:text-base font-extrabold font-heading tracking-tight group-hover:text-blue-600 transition-colors">
-                ElderGuard <span className="text-blue-600">AI</span>
-              </span>
-            </div>
+          <div className="min-w-0">
+            <span className="text-sm sm:text-base font-extrabold font-heading tracking-tight group-hover:text-blue-600 transition-colors whitespace-nowrap">
+              ElderGuard <span className="text-blue-600">AI</span>
+            </span>
             <p className="hidden sm:block text-[10px] text-slate-400 font-medium tracking-wide">
               Care. Protect. Empower.
             </p>
@@ -57,7 +54,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
         </div>
       </div>
 
-      {/* Center: Greeting & Live Telemetry Pills (Desktop & Tablet) */}
+      {/* Center: Greeting & Telemetry Pills (Desktop only) */}
       <div className="hidden lg:flex items-center gap-4">
         <div>
           <h2 className="text-xs sm:text-sm font-bold flex items-center gap-1.5">
@@ -67,7 +64,6 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
 
         <div className="h-4 w-[1px] bg-slate-200 dark:bg-slate-700" />
 
-        {/* Telemetry Status Pills */}
         <div className="flex items-center gap-2 text-xs font-medium">
           <span className="px-2.5 py-1 rounded-full bg-emerald-50 dark:bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-500/20 flex items-center gap-1.5">
             <Watch className="w-3.5 h-3.5 text-emerald-500" /> Watch Connected
@@ -81,27 +77,26 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
         </div>
       </div>
 
-      {/* Right: Actions */}
-      <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+      {/* Right: Actions — compact on mobile, full on desktop */}
+      <div className="flex items-center gap-1 sm:gap-2 shrink-0">
 
-        {/* Mobile Menu Drawer Toggle */}
+        {/* Mobile-only: Hamburger Menu Toggle */}
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="lg:hidden p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center gap-1.5 active:scale-95 transition-all shadow-xs"
+          className="lg:hidden p-1.5 sm:p-2 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 active:scale-95 transition-all"
           title="All Modules"
         >
           {mobileMenuOpen ? <X className="w-4 h-4 text-rose-500" /> : <Menu className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
-          <span className="hidden sm:inline">Menu</span>
         </button>
 
-        {/* Dark/Light Theme Switcher */}
+        {/* Dark/Light Theme Switcher — hidden on mobile, visible sm+ */}
         <button
           onClick={() => {
             const next = !darkMode;
             setDarkMode(next);
             speakText(next ? "Dark theme" : "Light theme");
           }}
-          className="p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
+          className="hidden sm:flex p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
           title="Toggle Theme"
         >
           {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-indigo-600" />}
@@ -110,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
         {/* Notifications */}
         <button
           onClick={toggleNotifications}
-          className="relative p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
+          className="relative p-1.5 sm:p-2.5 rounded-lg sm:rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors shadow-sm"
           title="Notifications"
         >
           <Bell className="w-4 h-4" />
@@ -121,18 +116,18 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
           )}
         </button>
 
-        {/* Emergency SOS Button */}
+        {/* Emergency SOS Button — icon-only on mobile */}
         <button
           onClick={triggerFallAlert}
-          className="px-2.5 sm:px-3.5 py-1.5 sm:py-2 rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs flex items-center gap-1 sm:gap-1.5 shadow-md shadow-rose-500/20 active:scale-95 transition-all"
+          className="p-1.5 sm:px-3.5 sm:py-2 rounded-lg sm:rounded-xl bg-rose-500 hover:bg-rose-600 text-white font-bold text-xs flex items-center gap-1 sm:gap-1.5 shadow-md shadow-rose-500/20 active:scale-95 transition-all"
         >
-          <ShieldAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
-          <span>SOS</span>
+          <ShieldAlert className="w-4 h-4" />
+          <span className="hidden sm:inline">SOS</span>
         </button>
 
-        {/* Profile Avatar & Logout */}
+        {/* Profile Avatar & Logout — hidden on mobile, visible sm+ */}
         {currentUser && (
-          <div className="flex items-center gap-1 sm:gap-2 ml-0.5 sm:ml-1">
+          <div className="hidden sm:flex items-center gap-1.5 ml-0.5">
             <span className="text-lg sm:text-xl">{currentUser.avatar}</span>
             <button
               onClick={logout}
