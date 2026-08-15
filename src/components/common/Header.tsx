@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEcosystem } from '../../context/EcosystemContext';
 import { 
-  ShieldAlert, Bell, LogOut, Sun, Moon, Watch, BatteryCharging, Shield, ArrowLeft
+  ShieldAlert, Bell, LogOut, Sun, Moon, Watch, BatteryCharging, Shield, ArrowLeft, Menu, X
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -12,7 +12,8 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
   const {
     screen, setScreen, role, currentUser, logout,
     triggerFallAlert, unreadCount,
-    darkMode, setDarkMode, speakText
+    darkMode, setDarkMode, speakText,
+    mobileMenuOpen, setMobileMenuOpen
   } = useEcosystem();
 
   return (
@@ -82,6 +83,16 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
 
       {/* Right: Actions */}
       <div className="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+
+        {/* Mobile Menu Drawer Toggle */}
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="lg:hidden p-2 sm:p-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-bold text-xs flex items-center gap-1.5 active:scale-95 transition-all shadow-xs"
+          title="All Modules"
+        >
+          {mobileMenuOpen ? <X className="w-4 h-4 text-rose-500" /> : <Menu className="w-4 h-4 text-blue-600 dark:text-blue-400" />}
+          <span className="hidden sm:inline">Menu</span>
+        </button>
 
         {/* Dark/Light Theme Switcher */}
         <button

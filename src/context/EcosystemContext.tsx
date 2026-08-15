@@ -68,6 +68,10 @@ interface EcosystemContextType {
   simpleMode: boolean;
   setSimpleMode: (val: boolean) => void;
 
+  // Mobile Menu Drawer
+  mobileMenuOpen: boolean;
+  setMobileMenuOpen: (val: boolean) => void;
+
   // Universal Voice Control Engine
   isGlobalVoiceListening: boolean;
   setIsGlobalVoiceListening: (val: boolean) => void;
@@ -244,6 +248,7 @@ export const EcosystemProvider: React.FC<{ children: React.ReactNode }> = ({ chi
 
   // Simple Mode (Defaults to true for ultimate ease of use & adaptability)
   const [simpleMode, setSimpleMode] = useState<boolean>(true);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
 
   // Voice Engine State
   const [isGlobalVoiceListening, setIsGlobalVoiceListening] = useState<boolean>(false);
@@ -608,6 +613,7 @@ export const EcosystemProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         currentUser, isAuthenticated,
         loginAsRole, logout,
         simpleMode, setSimpleMode,
+        mobileMenuOpen, setMobileMenuOpen,
         isGlobalVoiceListening, setIsGlobalVoiceListening,
         lastVoiceCommand, lastVoiceResponse,
         showVoiceGuide, setShowVoiceGuide,
