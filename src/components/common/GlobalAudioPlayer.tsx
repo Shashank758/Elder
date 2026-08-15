@@ -89,8 +89,8 @@ export const GlobalAudioPlayer: React.FC = () => {
 
       {/* Floating Bottom Audio Dock Banner */}
       <div 
-        className={`fixed bottom-4 right-4 z-50 transition-all duration-300 ${
-          minimized ? 'w-auto' : 'w-80 sm:w-96'
+        className={`fixed bottom-16 sm:bottom-4 right-3 sm:right-4 z-50 transition-all duration-300 ${
+          minimized ? 'w-auto' : 'w-[calc(100vw-24px)] max-w-xs sm:max-w-md'
         }`}
       >
         <div className="glass-panel p-4 rounded-3xl border border-amber-500/30 shadow-[0_10px_40px_rgba(245,158,11,0.25)] bg-slate-950/95 backdrop-blur-xl text-white">

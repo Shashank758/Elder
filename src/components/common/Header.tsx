@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEcosystem } from '../../context/EcosystemContext';
 import { 
-  ShieldAlert, Bell, LogOut, Sun, Moon, Watch, BatteryCharging, Shield
+  ShieldAlert, Bell, LogOut, Sun, Moon, Watch, BatteryCharging, Shield, ArrowLeft
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -10,7 +10,7 @@ interface HeaderProps {
 
 export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
   const {
-    setScreen, role, currentUser, logout,
+    screen, setScreen, role, currentUser, logout,
     triggerFallAlert, unreadCount,
     darkMode, setDarkMode, speakText
   } = useEcosystem();
@@ -18,28 +18,41 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
   return (
     <header className="sticky top-0 z-40 w-full app-header px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3.5 flex items-center justify-between gap-2 sm:gap-4">
 
-      {/* Left: Brand Logo & Tagline */}
-      <div
-        onClick={() => {
-          if (role === 'Doctor') setScreen('doctor');
-          else if (role === 'Family') setScreen('family');
-          else if (role === 'Admin') setScreen('admin');
-          else setScreen('dashboard');
-        }}
-        className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0"
-      >
-        <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
-          <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-        </div>
-        <div>
-          <div className="flex items-center gap-1">
-            <span className="text-sm sm:text-base font-extrabold font-heading tracking-tight group-hover:text-blue-600 transition-colors">
-              ElderGuard <span className="text-blue-600">AI</span>
-            </span>
+      {/* Left: Brand Logo & Back Button */}
+      <div className="flex items-center gap-2 shrink-0">
+        {screen !== 'dashboard' && (
+          <button
+            onClick={() => setScreen('dashboard')}
+            className="p-1.5 sm:p-2 rounded-xl bg-blue-50 dark:bg-slate-800 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-slate-700 transition-colors flex items-center gap-1 font-bold text-xs shadow-xs shrink-0"
+            title="Back to Dashboard"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span className="hidden sm:inline">Back</span>
+          </button>
+        )}
+
+        <div
+          onClick={() => {
+            if (role === 'Doctor') setScreen('doctor');
+            else if (role === 'Family') setScreen('family');
+            else if (role === 'Admin') setScreen('admin');
+            else setScreen('dashboard');
+          }}
+          className="flex items-center gap-2 sm:gap-3 cursor-pointer group shrink-0"
+        >
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl sm:rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+            <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
           </div>
-          <p className="hidden sm:block text-[10px] text-slate-400 font-medium tracking-wide">
-            Care. Protect. Empower.
-          </p>
+          <div>
+            <div className="flex items-center gap-1">
+              <span className="text-sm sm:text-base font-extrabold font-heading tracking-tight group-hover:text-blue-600 transition-colors">
+                ElderGuard <span className="text-blue-600">AI</span>
+              </span>
+            </div>
+            <p className="hidden sm:block text-[10px] text-slate-400 font-medium tracking-wide">
+              Care. Protect. Empower.
+            </p>
+          </div>
         </div>
       </div>
 

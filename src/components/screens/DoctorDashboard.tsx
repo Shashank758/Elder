@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { useEcosystem } from '../../context/EcosystemContext';
-import { Stethoscope, Download, Plus, UserCheck } from 'lucide-react';
+import { Stethoscope, Download, Plus, UserCheck, ArrowLeft } from 'lucide-react';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip } from 'recharts';
 
 export const DoctorDashboard: React.FC = () => {
-  const { watchData, medicines, addMedicine } = useEcosystem();
+  const { watchData, medicines, addMedicine, setScreen } = useEcosystem();
 
   const [selectedPatient, setSelectedPatient] = useState('Devendra Kumar');
   const [showRxModal, setShowRxModal] = useState(false);
@@ -50,17 +50,25 @@ export const DoctorDashboard: React.FC = () => {
       
       {/* Header */}
       <div className="app-card p-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-gradient-to-r from-purple-50/50 to-indigo-50/50 dark:from-slate-900 dark:to-slate-900 print:hidden">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-purple-600 dark:text-purple-400 mb-1">
-            <Stethoscope className="w-4 h-4 text-purple-500" />
-            <span>Cardiology & Geriatric Clinical Portal • Dr. A. Sharma (MD)</span>
+        <div className="flex items-start gap-3">
+          <button
+            onClick={() => setScreen('dashboard')}
+            className="p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 transition-colors shrink-0 shadow-xs"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <div className="flex items-center gap-2 text-xs font-mono text-purple-600 dark:text-purple-400 mb-1">
+              <Stethoscope className="w-4 h-4 text-purple-500" />
+              <span>Cardiology & Geriatric Clinical Portal • Dr. A. Sharma (MD)</span>
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 dark:text-white">
+              Doctor Clinical Telemetry & Prescription Hub
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              Continuous ECG Lead telemetry, remote clinical trends & AI diagnostic synthesis.
+            </p>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold font-heading text-slate-900 dark:text-white">
-            Doctor Clinical Telemetry & Prescription Hub
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500 mt-1">
-            Continuous ECG Lead telemetry, remote clinical trends & AI diagnostic synthesis.
-          </p>
         </div>
 
         <button

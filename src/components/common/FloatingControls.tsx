@@ -6,7 +6,7 @@ export const FloatingControls: React.FC = () => {
   const { setScreen, triggerFallAlert } = useEcosystem();
 
   return (
-    <div className="fixed bottom-20 lg:bottom-6 right-4 sm:right-6 z-40 flex flex-col sm:flex-row items-end sm:items-center gap-2.5 sm:gap-3 pointer-events-none">
+    <div className="fixed bottom-32 sm:bottom-20 lg:bottom-6 right-3 sm:right-6 z-40 flex flex-col sm:flex-row items-end sm:items-center gap-2.5 sm:gap-3 pointer-events-none">
       
       {/* Floating Emergency SOS Button */}
       <button

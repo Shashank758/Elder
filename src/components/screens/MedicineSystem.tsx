@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useEcosystem } from '../../context/EcosystemContext';
-import { Pill, CheckCircle2, Clock, Calendar } from 'lucide-react';
+import { Pill, CheckCircle2, Clock, Calendar, ArrowLeft } from 'lucide-react';
 
 export const MedicineSystem: React.FC = () => {
-  const { medicines, toggleMedicineTaken, speakText } = useEcosystem();
+  const { medicines, toggleMedicineTaken, speakText, setScreen } = useEcosystem();
   const [activeTab, setActiveTab] = useState<'today' | 'upcoming'>('today');
 
   return (
@@ -11,11 +11,19 @@ export const MedicineSystem: React.FC = () => {
 
       {/* Screen Title */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-extrabold font-heading text-slate-900 dark:text-white flex items-center gap-2">
-            <Pill className="w-6 h-6 text-emerald-500" /> Medicine Schedule
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-500">Track daily doses and prescription reminders</p>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setScreen('dashboard')}
+            className="p-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <h1 className="text-2xl font-extrabold font-heading text-slate-900 dark:text-white flex items-center gap-2">
+              <Pill className="w-6 h-6 text-emerald-500" /> Medicine Schedule
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500">Track daily doses and prescription reminders</p>
+          </div>
         </div>
 
         <button className="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300">

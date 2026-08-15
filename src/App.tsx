@@ -89,7 +89,7 @@ const AppContent: React.FC = () => {
       {/* Main Layout */}
       <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-10">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto min-h-screen pb-20 lg:pb-8 bg-slate-50 dark:bg-[#060911] transition-colors duration-300">
+        <main className="flex-1 overflow-y-auto min-h-screen pb-44 lg:pb-8 pt-2 lg:pt-0 bg-slate-50 dark:bg-[#060911] transition-colors duration-300">
           {renderActiveScreen()}
         </main>
       </div>

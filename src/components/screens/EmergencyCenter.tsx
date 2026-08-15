@@ -1,9 +1,9 @@
 import React from 'react';
 import { useEcosystem } from '../../context/EcosystemContext';
-import { ShieldAlert, PhoneCall, MapPin, QrCode } from 'lucide-react';
+import { ShieldAlert, PhoneCall, MapPin, QrCode, ArrowLeft } from 'lucide-react';
 
 export const EmergencyCenter: React.FC = () => {
-  const { triggerFallAlert } = useEcosystem();
+  const { triggerFallAlert, setScreen } = useEcosystem();
 
   const emergencyServices = [
     { title: 'Max Super Speciality Hospital', type: 'Hospital', dist: '1.2 km', phone: '+91 11 2651 5050', action: 'Call Hospital' },
@@ -23,17 +23,25 @@ export const EmergencyCenter: React.FC = () => {
       
       {/* Top Banner & Giant SOS */}
       <div className="app-card p-6 sm:p-8 border-2 border-rose-500 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 bg-gradient-to-r from-rose-50 to-orange-50 dark:from-slate-900 dark:to-slate-900">
-        <div>
-          <div className="flex items-center gap-2 text-xs font-mono text-rose-600 dark:text-rose-400 mb-2">
-            <ShieldAlert className="w-4 h-4 text-rose-500 animate-bounce" />
-            <span>INSTANT EMERGENCY DISPATCH ENGINE</span>
+        <div className="flex items-start gap-3">
+          <button
+            onClick={() => setScreen('dashboard')}
+            className="p-2 rounded-xl bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-100 transition-colors shrink-0 shadow-xs"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+          <div>
+            <div className="flex items-center gap-2 text-xs font-mono text-rose-600 dark:text-rose-400 mb-2">
+              <ShieldAlert className="w-4 h-4 text-rose-500 animate-bounce" />
+              <span>INSTANT EMERGENCY DISPATCH ENGINE</span>
+            </div>
+            <h1 className="text-3xl sm:text-4xl font-extrabold font-heading text-slate-900 dark:text-white">
+              Emergency SOS Command Center
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-lg">
+              One-touch emergency trigger instantly shares GPS coordinates, activates watch vibration sirens & notifies family.
+            </p>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold font-heading text-slate-900 dark:text-white">
-            Emergency SOS Command Center
-          </h1>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-300 mt-1 max-w-lg">
-            One-touch emergency trigger instantly shares GPS coordinates, activates watch vibration sirens & notifies family.
-          </p>
         </div>
 
         {/* Giant Red SOS Trigger Button */}
