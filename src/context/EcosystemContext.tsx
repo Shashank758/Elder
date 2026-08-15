@@ -320,31 +320,81 @@ export const EcosystemProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     setScreen('login');
   };
 
-  // Firebase Realtime Database Listener for Arduino Home Hub
+  // Firebase Realtime Database Listener for Smart Watch (EG-WATCH-001) & Home Hub
   useEffect(() => {
     try {
+      // 1. Root listener to catch both elderguard tree & root nodes
       const rootRef = ref(database, '/');
-      const unsubscribe = onValue(rootRef, (snapshot) => {
+      const unsubscribeRoot = onValue(rootRef, (snapshot) => {
         if (snapshot.exists()) {
           const val = snapshot.val();
           setFirebaseConnected(true);
-          // Check if data is directly at root or inside homehub node
-          const data = val.homehub || val.sensorData || val.sensors || val;
-          if (data && typeof data === 'object') {
+
+          // Extract Watch Data from elderguard/watches/EG-WATCH-001/current or root nodes
+          const watchDataVal = 
+            val.elderguard?.watches?.['EG-WATCH-001']?.current ||
+            val.elderguard?.watches?.current ||
+            val.watches?.['EG-WATCH-001']?.current ||
+            val.watchCurrent ||
+            val.watch;
+
+          if (watchDataVal && typeof watchDataVal === 'object') {
+            const parsedHr = typeof watchDataVal.heartRate === 'number' && watchDataVal.heartRate > 0
+              ? Number(watchDataVal.heartRate.toFixed(1))
+              : null;
+
+            const isWifi = typeof watchDataVal.wifiConnected === 'boolean'
+              ? watchDataVal.wifiConnected
+              : true;
+
+            const isOnline = watchDataVal.deviceStatus === 'ONLINE' || isWifi;
+            const isFall = watchDataVal.fallDetected === true || watchDataVal.fallStatus === 'IMPACT' || watchDataVal.fallStatus === 'FALL_DETECTED';
+            const isSos = watchDataVal.sos === true;
+
+            // Auto-trigger Emergency Modal if Smartwatch detects a fall or SOS button press
+            if (isFall || isSos) {
+              setFallAlertActive(true);
+            }
+
+            setWatchData(prev => ({
+              ...prev,
+              heartRate: parsedHr ?? prev.heartRate,
+              wifiConnected: isWifi,
+              bluetoothConnected: isOnline,
+              deviceId: watchDataVal.deviceId || 'EG-WATCH-001',
+              deviceStatus: watchDataVal.deviceStatus || (isOnline ? 'ONLINE' : 'OFFLINE'),
+              fallDetected: watchDataVal.fallDetected ?? false,
+              fallStatus: watchDataVal.fallStatus || (isFall ? 'FALL_DETECTED' : 'NORMAL'),
+              pulseSignal: watchDataVal.pulseSignal ?? prev.pulseSignal,
+              sos: isSos,
+              uptimeMs: watchDataVal.uptimeMs ?? prev.uptimeMs,
+              wifiStrength: watchDataVal.wifiStrength ?? prev.wifiStrength,
+              firmwareVersion: watchDataVal.firmwareVersion || '2.0.0',
+              watchDate: watchDataVal.date || prev.watchDate,
+              watchTime: watchDataVal.time || prev.watchTime,
+              accelX: typeof watchDataVal.acceleration === 'number' ? watchDataVal.acceleration : prev.accelX,
+              gyroX: typeof watchDataVal.gyroscope === 'number' ? watchDataVal.gyroscope : prev.gyroX,
+              motionIntensity: typeof watchDataVal.acceleration === 'number' ? Math.max(12, Math.round(watchDataVal.acceleration * 10)) : prev.motionIntensity
+            }));
+          }
+
+          // Extract Home Sensor Data
+          const homeData = val.elderguard?.sensors?.current || val.homehub || val.sensorData || val.sensors || val;
+          if (homeData && typeof homeData === 'object' && ('temperature' in homeData || 'mq3Analog' in homeData || 'doorClosed' in homeData)) {
             setHomeSensors(prev => ({
               ...prev,
-              temperature: typeof data.temperature === 'number' ? data.temperature : prev.temperature,
-              humidity: typeof data.humidity === 'number' ? data.humidity : prev.humidity,
-              mq3Analog: typeof data.mq3Analog === 'number' ? data.mq3Analog : prev.mq3Analog,
-              mq3Digital: typeof data.mq3Digital === 'number' ? data.mq3Digital : prev.mq3Digital,
-              ldr: typeof data.ldr === 'number' ? data.ldr : prev.ldr,
-              doorClosed: typeof data.doorClosed === 'boolean' ? data.doorClosed : prev.doorClosed,
-              doorOpen: typeof data.doorClosed === 'boolean' ? !data.doorClosed : prev.doorOpen,
-              soundDetected: typeof data.soundDetected === 'boolean' ? data.soundDetected : prev.soundDetected,
-              flameDetected: typeof data.flameDetected === 'boolean' ? data.flameDetected : prev.flameDetected,
-              mq3Alert: typeof data.mq3Alert === 'boolean' ? data.mq3Alert : prev.mq3Alert,
-              gasLeak: typeof data.mq3Alert === 'boolean' ? data.mq3Alert : prev.gasLeak,
-              emergency: typeof data.emergency === 'boolean' ? data.emergency : prev.emergency,
+              temperature: typeof homeData.temperature === 'number' ? homeData.temperature : prev.temperature,
+              humidity: typeof homeData.humidity === 'number' ? homeData.humidity : prev.humidity,
+              mq3Analog: typeof homeData.mq3Analog === 'number' ? homeData.mq3Analog : prev.mq3Analog,
+              mq3Digital: typeof homeData.mq3Digital === 'number' ? homeData.mq3Digital : prev.mq3Digital,
+              ldr: typeof homeData.ldr === 'number' ? homeData.ldr : prev.ldr,
+              doorClosed: typeof homeData.doorClosed === 'boolean' ? homeData.doorClosed : prev.doorClosed,
+              doorOpen: typeof homeData.doorClosed === 'boolean' ? !homeData.doorClosed : prev.doorOpen,
+              soundDetected: typeof homeData.soundDetected === 'boolean' ? homeData.soundDetected : prev.soundDetected,
+              flameDetected: typeof homeData.flameDetected === 'boolean' ? homeData.flameDetected : prev.flameDetected,
+              mq3Alert: typeof homeData.mq3Alert === 'boolean' ? homeData.mq3Alert : prev.mq3Alert,
+              gasLeak: typeof homeData.mq3Alert === 'boolean' ? homeData.mq3Alert : prev.gasLeak,
+              emergency: typeof homeData.emergency === 'boolean' ? homeData.emergency : prev.emergency,
               lastUpdated: new Date().toLocaleTimeString()
             }));
           }
@@ -354,15 +404,67 @@ export const EcosystemProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         setFirebaseConnected(false);
       });
 
-      return () => unsubscribe();
+      // 2. Direct Watch listener specifically for elderguard/watches/EG-WATCH-001/current path
+      const watchRef = ref(database, 'elderguard/watches/EG-WATCH-001/current');
+      const unsubscribeWatch = onValue(watchRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const watchDataVal = snapshot.val();
+          setFirebaseConnected(true);
+          if (watchDataVal && typeof watchDataVal === 'object') {
+            const parsedHr = typeof watchDataVal.heartRate === 'number' && watchDataVal.heartRate > 0
+              ? Number(watchDataVal.heartRate.toFixed(1))
+              : null;
+
+            const isWifi = typeof watchDataVal.wifiConnected === 'boolean'
+              ? watchDataVal.wifiConnected
+              : true;
+
+            const isOnline = watchDataVal.deviceStatus === 'ONLINE' || isWifi;
+            const isFall = watchDataVal.fallDetected === true || watchDataVal.fallStatus === 'IMPACT' || watchDataVal.fallStatus === 'FALL_DETECTED';
+            const isSos = watchDataVal.sos === true;
+
+            if (isFall || isSos) {
+              setFallAlertActive(true);
+            }
+
+            setWatchData(prev => ({
+              ...prev,
+              heartRate: parsedHr ?? prev.heartRate,
+              wifiConnected: isWifi,
+              bluetoothConnected: isOnline,
+              deviceId: watchDataVal.deviceId || 'EG-WATCH-001',
+              deviceStatus: watchDataVal.deviceStatus || (isOnline ? 'ONLINE' : 'OFFLINE'),
+              fallDetected: watchDataVal.fallDetected ?? false,
+              fallStatus: watchDataVal.fallStatus || (isFall ? 'FALL_DETECTED' : 'NORMAL'),
+              pulseSignal: watchDataVal.pulseSignal ?? prev.pulseSignal,
+              sos: isSos,
+              uptimeMs: watchDataVal.uptimeMs ?? prev.uptimeMs,
+              wifiStrength: watchDataVal.wifiStrength ?? prev.wifiStrength,
+              firmwareVersion: watchDataVal.firmwareVersion || '2.0.0',
+              watchDate: watchDataVal.date || prev.watchDate,
+              watchTime: watchDataVal.time || prev.watchTime,
+              accelX: typeof watchDataVal.acceleration === 'number' ? watchDataVal.acceleration : prev.accelX,
+              gyroX: typeof watchDataVal.gyroscope === 'number' ? watchDataVal.gyroscope : prev.gyroX,
+            }));
+          }
+        }
+      }, (err) => {
+        console.warn("Direct watch listener notice:", err);
+      });
+
+      return () => {
+        unsubscribeRoot();
+        unsubscribeWatch();
+      };
     } catch (e) {
       console.warn("Firebase init error:", e);
     }
   }, []);
 
-  // Live simulation of MPU6050 & Heartbeat telemetry
+  // Live simulation of MPU6050 & Heartbeat telemetry (only when Firebase is NOT connected)
   useEffect(() => {
     const interval = setInterval(() => {
+      if (firebaseConnected) return; // Prioritize real-time Firebase data when live
       setWatchData(prev => {
         const hrJitter = Math.floor(Math.random() * 5) - 2;
         const accelJitterX = Number((prev.accelX + (Math.random() * 0.1 - 0.05)).toFixed(2));
@@ -384,7 +486,7 @@ export const EcosystemProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     }, 2500);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [firebaseConnected]);
 
   // Update HTML body accessibility classes
   useEffect(() => {

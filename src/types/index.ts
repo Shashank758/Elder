@@ -54,6 +54,18 @@ export interface WatchTelemetry {
   sleepQuality: string;
   hydrationMl: number;
   hydrationGoal: number;
+  // Real-time Smartwatch EG-WATCH-001 Firebase Telemetry Fields
+  deviceId?: string;
+  deviceStatus?: string;
+  fallDetected?: boolean;
+  fallStatus?: string;
+  pulseSignal?: number;
+  sos?: boolean;
+  uptimeMs?: number;
+  wifiStrength?: number;
+  firmwareVersion?: string;
+  watchDate?: string;
+  watchTime?: string;
 }
 
 export interface SmartHomeSensors {
