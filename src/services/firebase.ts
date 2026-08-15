@@ -1,4 +1,4 @@
-import { initializeApp } from "firebase/app";
+import { initializeApp, getApps, getApp, type FirebaseApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
 import { getDatabase, ref, onValue, set, push, Database } from "firebase/database";
 
@@ -14,8 +14,14 @@ const firebaseConfig = {
   measurementId: "G-RBLJ9GT5NL"
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase — safely handle Vite HMR re-initialization
+let app: FirebaseApp;
+if (getApps().length > 0) {
+  app = getApp();
+} else {
+  app = initializeApp(firebaseConfig);
+}
+
 const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 const database: Database = getDatabase(app);
 
