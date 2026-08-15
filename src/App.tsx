@@ -79,7 +79,7 @@ const AppContent: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-slate-50 dark:bg-[#060911] text-slate-900 dark:text-slate-100 selection:bg-blue-500 selection:text-white relative transition-colors duration-300">
+    <div className="h-screen max-h-screen w-full flex flex-col bg-slate-50 dark:bg-[#060911] text-slate-900 dark:text-slate-100 selection:bg-blue-500 selection:text-white relative overflow-hidden transition-colors duration-300">
       {/* 3D Canvas rendering in dark mode */}
       {darkMode && <Master3DCanvas />}
 
@@ -87,9 +87,9 @@ const AppContent: React.FC = () => {
       <Header toggleNotifications={() => setIsNotificationOpen(!isNotificationOpen)} />
 
       {/* Main Layout */}
-      <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative z-10">
+      <div className="flex-1 min-h-0 flex flex-col lg:flex-row overflow-hidden relative z-10">
         <Sidebar />
-        <main className="flex-1 overflow-y-auto h-[calc(100vh-57px)] pb-36 lg:pb-8 pt-3 lg:pt-0 bg-slate-50 dark:bg-[#060911] transition-colors duration-300">
+        <main className="flex-1 min-h-0 overflow-y-auto pb-36 lg:pb-8 pt-4 sm:pt-6 bg-slate-50 dark:bg-[#060911] transition-colors duration-300">
           {renderActiveScreen()}
         </main>
       </div>
