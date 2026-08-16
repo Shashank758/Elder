@@ -160,3 +160,15 @@ export interface AuthUser {
   credential: string; // e.g. Medical License No, Employee ID, etc.
   linkedElderId?: string; // Which elder this user is associated with
 }
+
+export interface SmsAlertItem {
+  id: string;
+  recipient: string;
+  message: string;
+  timestamp: string;
+  type: string;
+  vitalName: string;
+  vitalValue: string;
+  normalRange: string;
+  severity: 'CRITICAL' | 'WARNING';
+}

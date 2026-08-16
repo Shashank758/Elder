@@ -1,7 +1,7 @@
 import React from 'react';
 import { useEcosystem } from '../../context/EcosystemContext';
 import {
-  ShieldAlert, Bell, LogOut, Sun, Moon, Watch, BatteryCharging, Shield, ArrowLeft, Menu, X
+  ShieldAlert, Bell, LogOut, Sun, Moon, Watch, BatteryCharging, Shield, ArrowLeft, Menu, X, Zap
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -13,7 +13,8 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
     screen, setScreen, role, currentUser, logout,
     triggerFallAlert, unreadCount,
     darkMode, setDarkMode, speakText,
-    mobileMenuOpen, setMobileMenuOpen
+    mobileMenuOpen, setMobileMenuOpen,
+    setIsSimulatorOpen
   } = useEcosystem();
 
   return (
@@ -114,6 +115,16 @@ export const Header: React.FC<HeaderProps> = ({ toggleNotifications }) => {
               {unreadCount}
             </span>
           )}
+        </button>
+
+        {/* Hackathon Manual Vital Entry & Alert Simulator Button */}
+        <button
+          onClick={() => setIsSimulatorOpen(true)}
+          className="px-2 sm:px-3 py-1.5 sm:py-2 rounded-lg sm:rounded-xl bg-blue-500/10 hover:bg-blue-500/20 border border-blue-500/30 text-blue-600 dark:text-blue-400 font-bold text-[11px] sm:text-xs flex items-center gap-1 shadow-xs active:scale-95 transition-all"
+          title="Manual Vital Entry & Hackathon Alert Simulator"
+        >
+          <Zap className="w-3.5 h-3.5 text-blue-500" />
+          <span className="hidden sm:inline">Vitals Entry</span>
         </button>
 
         {/* Emergency SOS Button — icon-only on mobile */}

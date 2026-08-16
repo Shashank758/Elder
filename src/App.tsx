@@ -27,6 +27,8 @@ import { SettingsScreen } from './components/screens/SettingsScreen';
 import { AdminPanel } from './components/screens/AdminPanel';
 import { GlobalAudioPlayer } from './components/common/GlobalAudioPlayer';
 import { GlobalVoiceController } from './components/common/GlobalVoiceController';
+import { SmsAlertBanner } from './components/common/SmsAlertBanner';
+import { VitalSimulatorModal } from './components/common/VitalSimulatorModal';
 
 const AppContent: React.FC = () => {
   const { screen, isAuthenticated, darkMode } = useEcosystem();
@@ -97,6 +99,8 @@ const AppContent: React.FC = () => {
       </div>
 
       {/* Global Controls & Modals */}
+      <SmsAlertBanner />
+      <VitalSimulatorModal />
       <FloatingControls />
       <NotificationDrawer isOpen={isNotificationOpen} onClose={() => setIsNotificationOpen(false)} />
       <FallDetectionModal />

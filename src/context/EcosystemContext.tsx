@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import type { AppScreen, UserRole, LanguageCode, WatchTelemetry, SmartHomeSensors, MedicineItem, SpiritualTrack, NotificationItem, AuthUser } from '../types';
+import type { AppScreen, UserRole, LanguageCode, WatchTelemetry, SmartHomeSensors, MedicineItem, SpiritualTrack, NotificationItem, AuthUser, SmsAlertItem } from '../types';
 import { SPIRITUAL_PLAYLIST } from '../data/playlist';
 import { watchDatabase, hubDatabase, ref, onValue } from '../services/firebase';
 
@@ -129,10 +129,17 @@ interface EcosystemContextType {
   // Hydration
   logHydration: (amount: number) => void;
 
-  // Live simulation controls
+  // Live simulation & Hackathon Vitals Control
   isSimulatingFall: boolean;
   simulateFallEvent: () => void;
   simulateGasLeak: () => void;
+
+  // Manual Vitals Entry & SMS Emergency Alert System
+  latestSmsAlert: SmsAlertItem | null;
+  dismissSmsAlert: () => void;
+  updateVitals: (vitals: { heartRate?: number; systolicBp?: number; diastolicBp?: number; spO2?: number; temperature?: number }) => void;
+  isSimulatorOpen: boolean;
+  setIsSimulatorOpen: (val: boolean) => void;
 }
 
 const defaultWatchTelemetry: WatchTelemetry = {
@@ -278,6 +285,10 @@ export const EcosystemProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   
   const [fallAlertActive, setFallAlertActive] = useState(false);
   const [isSimulatingFall, setIsSimulatingFall] = useState(false);
+  
+  // Hackathon Manual Vital Entry & SMS Alert State
+  const [latestSmsAlert, setLatestSmsAlert] = useState<SmsAlertItem | null>(null);
+  const [isSimulatorOpen, setIsSimulatorOpen] = useState<boolean>(false);
   
   const [medicines, setMedicines] = useState<MedicineItem[]>(initialMedicines);
   const [notifications, setNotifications] = useState<NotificationItem[]>(initialNotifications);
@@ -697,6 +708,91 @@ export const EcosystemProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     });
   };
 
+  const dismissSmsAlert = () => setLatestSmsAlert(null);
+
+  const updateVitals = (vitals: {
+    heartRate?: number;
+    systolicBp?: number;
+    diastolicBp?: number;
+    spO2?: number;
+    temperature?: number;
+  }) => {
+    setWatchData(prev => {
+      const updated = {
+        ...prev,
+        heartRate: typeof vitals.heartRate === 'number' ? vitals.heartRate : prev.heartRate,
+        systolicBp: typeof vitals.systolicBp === 'number' ? vitals.systolicBp : prev.systolicBp,
+        diastolicBp: typeof vitals.diastolicBp === 'number' ? vitals.diastolicBp : prev.diastolicBp,
+        spO2: typeof vitals.spO2 === 'number' ? vitals.spO2 : prev.spO2,
+        temperature: typeof vitals.temperature === 'number' ? vitals.temperature : prev.temperature
+      };
+
+      const hr = updated.heartRate;
+      const sys = updated.systolicBp;
+      const dia = updated.diastolicBp;
+      const spo2 = updated.spO2;
+      const temp = updated.temperature;
+
+      let alertMessage = '';
+      let alertType = '';
+      let vitalName = '';
+      let vitalValue = '';
+      let normalRange = '';
+      let severity: 'CRITICAL' | 'WARNING' = 'CRITICAL';
+
+      if (hr > 120) {
+        alertType = 'HIGH_HR';
+        vitalName = 'Heart Rate (Tachycardia)';
+        vitalValue = `${hr} BPM`;
+        normalRange = '60 - 100 BPM';
+        alertMessage = `CRITICAL ALERT: Devendra's Heart Rate reached ${hr} BPM (Tachycardia threshold > 120 BPM). Immediate caregiver attention required!`;
+      } else if (sys > 140 || dia > 90) {
+        alertType = 'HIGH_BP';
+        vitalName = 'Blood Pressure Surge';
+        vitalValue = `${sys}/${dia} mmHg`;
+        normalRange = '90/60 - 120/80 mmHg';
+        alertMessage = `CRITICAL ALERT: Devendra's Blood Pressure elevated to ${sys}/${dia} mmHg (Hypertensive Stage 2 > 140/90). Emergency notification dispatched to guardians!`;
+      } else if (spo2 < 92) {
+        alertType = 'LOW_SPO2';
+        vitalName = 'Blood Oxygen (Hypoxia)';
+        vitalValue = `${spo2}% SpO₂`;
+        normalRange = '95% - 100%';
+        alertMessage = `WARNING ALERT: Devendra's SpO₂ Oxygen level dropped to ${spo2}% (Hypoxia threshold < 92%). Supplemental oxygen recommended.`;
+      } else if (temp > 38.0 || temp > 100.4) {
+        alertType = 'HIGH_TEMP';
+        vitalName = 'Body Temperature (Fever)';
+        vitalValue = `${temp}°C`;
+        normalRange = '36.5°C - 37.5°C';
+        alertMessage = `HIGH FEVER ALERT: Devendra's body temperature reached ${temp}°C. Fever protocol initiated.`;
+      }
+
+      if (alertMessage) {
+        const smsItem: SmsAlertItem = {
+          id: 'sms-' + Date.now(),
+          recipient: 'Son (Amit +91 98100 12345) & Daughter (Neha)',
+          message: alertMessage,
+          timestamp: new Date().toLocaleTimeString(),
+          type: alertType,
+          vitalName,
+          vitalValue,
+          normalRange,
+          severity
+        };
+
+        setLatestSmsAlert(smsItem);
+        speakText(`Warning! ${vitalName} reading is high at ${vitalValue}. SMS emergency notification sent to family members.`);
+        
+        addNotification({
+          title: `📲 SMS SENT: ${vitalName}`,
+          message: alertMessage,
+          type: 'emergency'
+        });
+      }
+
+      return updated;
+    });
+  };
+
   return (
     <EcosystemContext.Provider
       value={{
@@ -724,7 +820,9 @@ export const EcosystemProvider: React.FC<{ children: React.ReactNode }> = ({ chi
         notifications, markNotificationRead, addNotification, unreadCount,
         currentTrack, setCurrentTrack, isPlayingTrack, setIsPlayingTrack,
         logHydration,
-        isSimulatingFall, simulateFallEvent, simulateGasLeak
+        isSimulatingFall, simulateFallEvent, simulateGasLeak,
+        latestSmsAlert, dismissSmsAlert, updateVitals,
+        isSimulatorOpen, setIsSimulatorOpen
       }}
     >
       {children}
