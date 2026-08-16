@@ -43,11 +43,10 @@ export const Analytics: React.FC = () => {
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`px-5 py-2 rounded-xl text-xs font-bold capitalize transition-all ${
-              tab === t
+            className={`px-5 py-2 rounded-xl text-xs font-bold capitalize transition-all ${tab === t
                 ? 'bg-white dark:bg-slate-900 text-blue-600 dark:text-blue-400 shadow-sm'
                 : 'text-slate-600 dark:text-slate-400'
-            }`}
+              }`}
           >
             {t} Report
           </button>
@@ -65,11 +64,10 @@ export const Analytics: React.FC = () => {
           <button
             key={r.id}
             onClick={() => setRange(r.id as any)}
-            className={`px-4 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all ${
-              range === r.id
+            className={`px-4 py-1.5 rounded-xl text-xs font-semibold shrink-0 transition-all ${range === r.id
                 ? 'bg-blue-600 text-white shadow-xs'
                 : 'bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200'
-            }`}
+              }`}
           >
             {r.label}
           </button>

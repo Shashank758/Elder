@@ -72,6 +72,10 @@ export const SCREEN_3D_PRESETS: Record<AppScreen, { camera: CameraPreset; post: 
     camera: { position: [2.5, 2, 5.5], lookAt: [0, 0, 0], fov: 45 },
     post: { bloomIntensity: 0.9, bloomThreshold: 0.4, chromaticAberration: 0.001, vignetteOffset: 0.45, noiseOpacity: 0.02 }
   },
+  ai360: {
+    camera: { position: [0, 1.2, 6.2], lookAt: [0, 0, 0], fov: 46 },
+    post: { bloomIntensity: 1.2, bloomThreshold: 0.3, chromaticAberration: 0.0015, vignetteOffset: 0.4, noiseOpacity: 0.02 }
+  },
   settings: {
     camera: { position: [0, 0, 5], lookAt: [0, 0, 0], fov: 45 },
     post: { bloomIntensity: 0.8, bloomThreshold: 0.4, chromaticAberration: 0.001, vignetteOffset: 0.45, noiseOpacity: 0.02 }

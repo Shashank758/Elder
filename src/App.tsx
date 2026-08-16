@@ -22,6 +22,7 @@ import { DoctorDashboard } from './components/screens/DoctorDashboard';
 import { EmergencyCenter } from './components/screens/EmergencyCenter';
 import { MentalWellness } from './components/screens/MentalWellness';
 import { Analytics } from './components/screens/Analytics';
+import { ElderGuardAI360Screen } from './components/screens/ElderGuardAI360Screen';
 import { SettingsScreen } from './components/screens/SettingsScreen';
 import { AdminPanel } from './components/screens/AdminPanel';
 import { GlobalAudioPlayer } from './components/common/GlobalAudioPlayer';
@@ -72,6 +73,7 @@ const AppContent: React.FC = () => {
       case 'emergency': return <EmergencyCenter />;
       case 'mental': return <MentalWellness />;
       case 'analytics': return <Analytics />;
+      case 'ai360': return <ElderGuardAI360Screen />;
       case 'settings': return <SettingsScreen />;
       case 'admin': return <AdminPanel />;
       default: return <HomeDashboard />;

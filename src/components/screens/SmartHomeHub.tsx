@@ -5,7 +5,7 @@ import {
   ArrowLeft, Activity, Volume2, VolumeX, AlertTriangle,
   Wifi, RefreshCw, Send, Terminal, Radio, Gauge, LockKeyhole
 } from 'lucide-react';
-import { database, ref, set, type ArduinoHubTelemetry } from '../../services/firebase';
+import { hubDatabase, ref, set, type ArduinoHubTelemetry } from '../../services/firebase';
 
 export const SmartHomeHub: React.FC = () => {
   const {
@@ -57,8 +57,7 @@ export const SmartHomeHub: React.FC = () => {
     };
 
     try {
-      await set(ref(database, '/homehub'), payload);
-      await set(ref(database, '/'), payload);
+      await set(ref(hubDatabase, 'ElderGuard/sensor_data/latest'), payload);
 
       setLogs(prev => [
         `${timeStr} -> ${JSON.stringify(payload)}`,

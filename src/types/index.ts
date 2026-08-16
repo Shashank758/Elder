@@ -13,6 +13,7 @@ export type AppScreen =
   | 'emergency'
   | 'mental'
   | 'analytics'
+  | 'ai360'
   | 'settings'
   | 'admin';
 
@@ -78,6 +79,8 @@ export interface SmartHomeSensors {
   motionDetected: boolean;
   soundDetected: boolean;
   emergency: boolean;
+  sosActive?: boolean;
+  sosAlert?: boolean;
   mq3Alert: boolean;
   mq3Analog: number;
   mq3Digital: number;

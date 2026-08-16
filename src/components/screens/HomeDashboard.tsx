@@ -59,7 +59,7 @@ export const HomeDashboard: React.FC = () => {
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          
+
           {/* Heart Rate Card */}
           <div className="app-card p-5 flex flex-col justify-between app-card-hover">
             <div className="flex items-center justify-between mb-2">
@@ -302,11 +302,10 @@ export const HomeDashboard: React.FC = () => {
                 setHomeSensors(p => ({ ...p, smartLightsOn: next }));
                 speakText(next ? "Lights on" : "Lights off");
               }}
-              className={`p-4 rounded-2xl border text-left flex flex-col justify-between gap-3 transition-all ${
-                homeSensors.smartLightsOn
-                  ? 'bg-amber-50 dark:bg-amber-500/10 border-amber-300 dark:border-amber-500/30 text-amber-900 dark:text-amber-300'
-                  : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-500'
-              }`}
+              className={`p-4 rounded-2xl border text-left flex flex-col justify-between gap-3 transition-all ${homeSensors.smartLightsOn
+                ? 'bg-amber-50 dark:bg-amber-500/10 border-amber-300 dark:border-amber-500/30 text-amber-900 dark:text-amber-300'
+                : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-500'
+                }`}
             >
               <Sun className="w-6 h-6 text-amber-500" />
               <div>
@@ -321,11 +320,10 @@ export const HomeDashboard: React.FC = () => {
                 setHomeSensors(p => ({ ...p, smartFanOn: next }));
                 speakText(next ? "Fan on" : "Fan off");
               }}
-              className={`p-4 rounded-2xl border text-left flex flex-col justify-between gap-3 transition-all ${
-                homeSensors.smartFanOn
-                  ? 'bg-blue-50 dark:bg-blue-500/10 border-blue-300 dark:border-blue-500/30 text-blue-900 dark:text-blue-300'
-                  : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-500'
-              }`}
+              className={`p-4 rounded-2xl border text-left flex flex-col justify-between gap-3 transition-all ${homeSensors.smartFanOn
+                ? 'bg-blue-50 dark:bg-blue-500/10 border-blue-300 dark:border-blue-500/30 text-blue-900 dark:text-blue-300'
+                : 'bg-slate-50 dark:bg-slate-800/60 border-slate-200 dark:border-slate-700 text-slate-500'
+                }`}
             >
               <Zap className="w-6 h-6 text-blue-500" />
               <div>

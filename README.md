@@ -1,32 +1,74 @@
-# React + TypeScript + Vite
+# 🛡️ ElderGuard AI 360 — Senior Care & Monitoring Platform
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**ElderGuard AI 360** is a production-grade elderly safety platform that synthesizes real-time Firebase IoT telemetry (from smartwatch wearables and smart home hubs) into an intelligent, explainable health and behavioral model for senior **Devendra Kumar (78y)**, monitored by family guardian **Rahul Kumar**.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🌟 Key Highlights of the AI 360 Production Upgrade
 
-## React Compiler
+- 📌 **Single Source of Truth Snapshot**: All AI components (Data Quality, Behavior Model, Context Engine, Anomaly Engine, Risk Engine, Explanations) consume the exact same `NormalizedSensorSnapshot` at a unified `eventTimestamp` and `processedAt`.
+- 🛡️ **Independent Data Quality & Health Risk**: Data Quality Score (0–100) and Health Risk Score (0–100) are evaluated as separate dimensions. An invalid temperature reading (e.g. `999°C` or missing sensor) triggers a **Data Quality Warning** while keeping the **Health Risk UNCHANGED**.
+- 📊 **Robust Z-Score Anomaly Engine**: Calculates statistical deviations ($Z = \frac{\text{current} - \mu}{\sigma}$) using robust statistics (Mean, Std, Median, MAD, p25, p75). An HR of 109 BPM vs $97 \pm 17$ BPM ($Z = 0.71\sigma$) is correctly recognized as normal ($|Z| \le 2.2\sigma$).
+- 🌙 **Context-Aware Sleeping Protection**: Low activity ($2\%$) during Night hours is classified as `SLEEPING` and recognized as normal/expected behavior (NO false activity anomaly).
+- 🛠️ **Developer AI Debug Panel**: Expandable terminal (`>_ AI Debug Panel`) displaying live snapshot timestamps, freshness, context state, baseline Z-scores, and evidence objects.
+- 👨‍👩‍👦 **Caregiver Feedback Storage**: Persistent recording of caregiver feedback (`REAL_CONCERN` / `FALSE_ALARM`) for model evaluation.
+- 🎮 **9 Deterministic Demo Scenarios**: Comprehensive scenario testing suite (Normal Night, Normal Morning, Low Activity Day, Elevated HR, Possible Fall, Prolonged Inactivity, Fall & SOS Critical, Invalid Sensor Data, Telemetry Disconnect).
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+---
 
-## Expanding the Oxlint configuration
+## 🏗️ Architecture Pipeline
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+```text
+REAL IoT TELEMETRY (Smartwatch EG-WATCH-001 + Living Room Hub)
+                        │
+                        ▼
+         1. Single Source Sensor Snapshot
+   (Explicit null checks & timestamp freshness)
+                        │
+                        ▼
+           2. Data Quality Service
+  (Independent Data Quality score 0-100 & warnings)
+                        │
+                        ▼
+        3. Personal Behavior Baseline Model
+ (Segmented time/day robust stats: Mean, Std, Median, MAD)
+                        │
+                        ▼
+             4. Context-Aware Engine
+   (Activity state: SLEEPING, RESTING, WALKING, ACTIVE)
+                        │
+                        ▼
+     5. Anomaly Detection & Multi-Sensor Fusion
+   (Z-score calculation & multi-sensor evidence)
+                        │
+                        ▼
+      6. Risk Engine & Dynamic Explainability
+  (Separate Health Risk score 0-100 & AI Confidence %)
+                        │
+                        ▼
+       7. Caregiver Command Dashboard UI
+  (Live metrics, anomaly log, debug panel & demo suite)
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+---
+
+## 🚀 Getting Started
+
+1. **Install Dependencies**:
+   ```bash
+   npm install
+   ```
+
+2. **Run Local Development Server**:
+   ```bash
+   npm run dev
+   ```
+
+3. **Production Build**:
+   ```bash
+   npm run build
+   ```
+
+---
+
+*ElderGuard AI 360 — Real-Time Senior Safety & Explainable AI.*

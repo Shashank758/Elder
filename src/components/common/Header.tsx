@@ -1,6 +1,6 @@
 import React from 'react';
 import { useEcosystem } from '../../context/EcosystemContext';
-import { 
+import {
   ShieldAlert, Bell, LogOut, Sun, Moon, Watch, BatteryCharging, Shield, ArrowLeft, Menu, X
 } from 'lucide-react';
 

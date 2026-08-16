@@ -4,13 +4,14 @@ import type { AppScreen } from '../../types';
 import {
   LayoutDashboard, Heart, Activity, Pill, Bot, Home,
   ShieldAlert, Users, FileText, Sparkles, Settings, X, ArrowLeft,
-  Sun, Moon, LogOut
+  Sun, Moon, LogOut, BrainCircuit
 } from 'lucide-react';
 
 interface NavItem {
   id: AppScreen;
   label: string;
   icon: React.ReactNode;
+  badge?: string;
 }
 
 export const Sidebar: React.FC = () => {
@@ -22,6 +23,7 @@ export const Sidebar: React.FC = () => {
 
   const mainNav: NavItem[] = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { id: 'ai360', label: 'ElderGuard AI 360', icon: <BrainCircuit className="w-4 h-4 text-purple-400 animate-pulse" />, badge: 'AI' },
     { id: 'smarthome', label: 'Smart Home Hub', icon: <Home className="w-4 h-4" /> },
     { id: 'prediction', label: 'Health Telemetry', icon: <Heart className="w-4 h-4" /> },
     { id: 'motion', label: 'Activity & Fall', icon: <Activity className="w-4 h-4" /> },
@@ -52,8 +54,8 @@ export const Sidebar: React.FC = () => {
       {/* Mobile & Desktop Sidebar Drawer Container */}
       <aside className={`
         app-sidebar shrink-0 p-4 flex flex-col justify-between overflow-y-auto transition-all duration-300
-        ${mobileMenuOpen 
-          ? 'fixed inset-y-0 left-0 w-72 sm:w-80 z-50 bg-white dark:bg-slate-900 shadow-2xl border-r border-slate-200 dark:border-slate-800' 
+        ${mobileMenuOpen
+          ? 'fixed inset-y-0 left-0 w-72 sm:w-80 z-50 bg-white dark:bg-slate-900 shadow-2xl border-r border-slate-200 dark:border-slate-800'
           : 'hidden lg:flex lg:w-60 lg:relative lg:z-0'
         }
       `}>
@@ -160,9 +162,8 @@ export const Sidebar: React.FC = () => {
             <button
               key={t.id}
               onClick={() => navigateTo(t.id)}
-              className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-xl text-[10px] font-bold transition-all active:scale-95 max-w-[64px] ${
-                isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
-              }`}
+              className={`flex flex-col items-center gap-0.5 px-1.5 py-1 rounded-xl text-[10px] font-bold transition-all active:scale-95 max-w-[64px] ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-slate-400 dark:text-slate-500'
+                }`}
             >
               <div className={`p-1 rounded-lg ${isActive ? 'bg-blue-50 dark:bg-blue-500/20' : ''}`}>
                 {t.icon}

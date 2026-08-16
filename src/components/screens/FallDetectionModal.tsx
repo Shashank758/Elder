@@ -3,14 +3,23 @@ import { useEcosystem } from '../../context/EcosystemContext';
 import { ShieldAlert, Phone, CheckCircle2, Video, Heart, Droplets, MapPin, AlertTriangle } from 'lucide-react';
 
 export const FallDetectionModal: React.FC = () => {
-  const { fallAlertActive, dismissFallAlert, watchData, speakText } = useEcosystem();
+  const { fallAlertActive, dismissFallAlert, watchData, homeSensors, speakText } = useEcosystem();
   const [countdown, setCountdown] = useState(25);
+
+  const isHubEmergency = homeSensors.emergency || homeSensors.sosActive || homeSensors.sosAlert;
+  const isWatchSos = watchData.sos;
 
   useEffect(() => {
     let timer: any;
     if (fallAlertActive) {
       setCountdown(25);
-      speakText("Emergency Fall detected! Auto-calling guardians in 25 seconds.");
+      if (isHubEmergency) {
+        speakText("Emergency SOS button pressed on Smart Home Hub! Auto-calling guardians in 25 seconds.");
+      } else if (isWatchSos) {
+        speakText("Emergency SOS button pressed on Smart Watch! Auto-calling guardians in 25 seconds.");
+      } else {
+        speakText("Emergency Fall detected! Auto-calling guardians in 25 seconds.");
+      }
 
       timer = setInterval(() => {
         setCountdown((prev) => {
@@ -24,25 +33,37 @@ export const FallDetectionModal: React.FC = () => {
       }, 1000);
     }
     return () => clearInterval(timer);
-  }, [fallAlertActive]);
+  }, [fallAlertActive, isHubEmergency, isWatchSos]);
 
   if (!fallAlertActive) return null;
+
+  const alertTitle = isHubEmergency
+    ? "Smart Hub SOS Alert!"
+    : isWatchSos
+    ? "Smartwatch SOS Alert!"
+    : "Fall Detected";
+
+  const alertDesc = isHubEmergency
+    ? "Emergency distress button pressed on Home Hub"
+    : isWatchSos
+    ? "Emergency SOS button pressed on Watch"
+    : "Possible hard fall detected by MPU6050";
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
       <div className="bg-[#110507] text-white rounded-3xl border border-rose-500/40 p-6 sm:p-8 max-w-md w-full shadow-[0_0_60px_rgba(244,63,94,0.4)] flex flex-col gap-6 animate-in zoom-in-95">
 
-        {/* Fall Icon Header */}
+        {/* Fall / SOS Icon Header */}
         <div className="flex flex-col items-center text-center">
           <div className="w-20 h-20 rounded-full bg-rose-500/20 border-2 border-rose-500 flex items-center justify-center text-rose-500 mb-3 animate-bounce">
             <AlertTriangle className="w-10 h-10" />
           </div>
 
           <h2 className="text-2xl font-extrabold font-heading text-rose-400">
-            Fall Detected
+            {alertTitle}
           </h2>
           <p className="text-xs text-rose-200/80 mt-0.5">
-            Possible hard fall detected • Today, 09:30 AM
+            {alertDesc} • {new Date().toLocaleTimeString()}
           </p>
         </div>
 
