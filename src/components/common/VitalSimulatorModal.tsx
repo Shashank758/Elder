@@ -13,10 +13,17 @@ export const VitalSimulatorModal: React.FC = () => {
 
   const [successMsg, setSuccessMsg] = useState<string>('');
 
+  const [telegramToken, setTelegramToken] = useState<string>(localStorage.getItem('elderguard_telegram_bot_token') || '');
+  const [telegramChatId, setTelegramChatId] = useState<string>(localStorage.getItem('elderguard_telegram_chat_id') || '');
+  const [showTelegramConfig, setShowTelegramConfig] = useState<boolean>(false);
+
   if (!isSimulatorOpen) return null;
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (telegramToken) localStorage.setItem('elderguard_telegram_bot_token', telegramToken);
+    if (telegramChatId) localStorage.setItem('elderguard_telegram_chat_id', telegramChatId);
+
     updateVitals({
       heartRate: Number(heartRateInput),
       systolicBp: Number(systolicInput),
@@ -24,7 +31,7 @@ export const VitalSimulatorModal: React.FC = () => {
       spO2: Number(spO2Input),
       temperature: Number(tempInput)
     });
-    setSuccessMsg('Vitals updated! SMS alert dispatched to family.');
+    setSuccessMsg('Vitals updated! SMS & Telegram alerts dispatched to family.');
     setTimeout(() => setSuccessMsg(''), 3000);
   };
 
@@ -242,6 +249,45 @@ export const VitalSimulatorModal: React.FC = () => {
 
           </div>
 
+          {/* Optional Telegram Bot Integration Settings Accordion */}
+          <div className="border-t border-slate-800 pt-2">
+            <button
+              type="button"
+              onClick={() => setShowTelegramConfig(!showTelegramConfig)}
+              className="text-xs font-bold text-sky-400 hover:text-sky-300 flex items-center gap-1 mb-2 font-mono"
+            >
+              <span>✈️ {showTelegramConfig ? 'Hide' : 'Configure'} Live Telegram Bot API (Optional)</span>
+            </button>
+
+            {showTelegramConfig && (
+              <div className="p-3 rounded-2xl bg-sky-950/40 border border-sky-500/30 flex flex-col gap-2.5 text-xs animate-in fade-in duration-200">
+                <div>
+                  <label className="text-[10px] font-mono text-sky-300 font-bold block mb-1">Telegram Bot Token (from @BotFather):</label>
+                  <input
+                    type="text"
+                    value={telegramToken}
+                    onChange={(e) => setTelegramToken(e.target.value)}
+                    placeholder="e.g. 7524912984:AAH3k891..."
+                    className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-sky-500/40 text-white font-mono text-xs focus:border-sky-400 outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] font-mono text-sky-300 font-bold block mb-1">Telegram User / Group Chat ID:</label>
+                  <input
+                    type="text"
+                    value={telegramChatId}
+                    onChange={(e) => setTelegramChatId(e.target.value)}
+                    placeholder="e.g. 591238412"
+                    className="w-full px-3 py-1.5 rounded-xl bg-slate-950 border border-sky-500/40 text-white font-mono text-xs focus:border-sky-400 outline-none"
+                  />
+                </div>
+                <p className="text-[10px] text-slate-400 leading-tight">
+                  Leave blank to use direct 1-click Telegram Web Dispatch link for instant presentation demo!
+                </p>
+              </div>
+            )}
+          </div>
+
           {/* Submit Button */}
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
@@ -253,9 +299,9 @@ export const VitalSimulatorModal: React.FC = () => {
             </button>
             <button
               type="submit"
-              className="px-5 py-2.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-lg flex items-center gap-2 transition-all active:scale-95"
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-blue-600 to-sky-600 hover:from-blue-500 hover:to-sky-500 text-white font-bold text-xs shadow-lg flex items-center gap-2 transition-all active:scale-95"
             >
-              <Send className="w-4 h-4" /> Send Vitals & Dispatch SMS Alert
+              <Send className="w-4 h-4" /> Send Vitals, SMS & Telegram Alert
             </button>
           </div>
         </form>

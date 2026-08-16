@@ -32,7 +32,7 @@ export const SmsAlertBanner: React.FC = () => {
             </div>
             <span className="font-mono text-xs font-bold text-rose-400 tracking-wider uppercase flex items-center gap-1.5">
               <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-              CRITICAL SMS ALERT SENT TO FAMILY
+              CRITICAL SMS & TELEGRAM ALERT DISPATCHED
             </span>
           </div>
 
@@ -70,17 +70,40 @@ export const SmsAlertBanner: React.FC = () => {
               {latestSmsAlert.message}
             </p>
 
-            <div className="mt-2 text-[11px] font-mono text-cyan-300/90 flex items-center gap-1.5 bg-cyan-950/50 p-2 rounded-lg border border-cyan-500/30">
-              <UserCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-              <span className="truncate">
-                SMS Delivered to: <strong className="text-white">{latestSmsAlert.recipient}</strong>
+            <div className="mt-2 text-[11px] font-mono text-cyan-300/90 flex flex-wrap items-center justify-between gap-1 bg-cyan-950/50 p-2 rounded-lg border border-cyan-500/30">
+              <span className="flex items-center gap-1.5 truncate">
+                <UserCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
+                SMS & Telegram Sent to: <strong className="text-white">{latestSmsAlert.recipient}</strong>
               </span>
+              {latestSmsAlert.telegramUrl && (
+                <span className="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded border border-blue-500/40 font-mono font-bold">
+                  ✈️ Telegram Bot Active
+                </span>
+              )}
             </div>
           </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center justify-end gap-2 pt-1">
+        <div className="flex flex-wrap items-center justify-end gap-2 pt-1">
+          {latestSmsAlert.smsUri && (
+            <a
+              href={latestSmsAlert.smsUri}
+              className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
+            >
+              <span>📱 SMS to 7597036780</span>
+            </a>
+          )}
+
+          {latestSmsAlert.telegramUrl && (
+            <button
+              onClick={() => window.open(latestSmsAlert.telegramUrl, '_blank')}
+              className="px-3 py-1.5 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow-md flex items-center gap-1.5 transition-all active:scale-95"
+            >
+              <span>✈️ View on Telegram</span>
+            </button>
+          )}
+
           <button
             onClick={() => {
               setScreen('family');
@@ -88,17 +111,17 @@ export const SmsAlertBanner: React.FC = () => {
             }}
             className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs shadow-md transition-all active:scale-95"
           >
-            Open Family Dashboard ›
+            Family Dashboard ›
           </button>
           
           <button
             onClick={() => {
-              speakText("Calling emergency guardian Amit...");
-              alert("Calling Son (Amit +91 98100 12345)...");
+              speakText("Calling emergency guardian Rahul...");
+              alert("Calling Son (Rahul +91 98100 12345)...");
             }}
             className="px-3 py-1.5 rounded-xl bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs shadow-md flex items-center gap-1 transition-all active:scale-95"
           >
-            <PhoneCall className="w-3.5 h-3.5" /> Call Son (+91 98100 12345)
+            <PhoneCall className="w-3.5 h-3.5" /> Call Son
           </button>
 
           <button

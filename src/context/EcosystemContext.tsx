@@ -2,6 +2,8 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import type { AppScreen, UserRole, LanguageCode, WatchTelemetry, SmartHomeSensors, MedicineItem, SpiritualTrack, NotificationItem, AuthUser, SmsAlertItem } from '../types';
 import { SPIRITUAL_PLAYLIST } from '../data/playlist';
 import { watchDatabase, hubDatabase, ref, onValue } from '../services/firebase';
+import { sendTelegramAlert } from '../services/telegramService';
+import { sendRealSms } from '../services/smsService';
 
 export const ROLE_PROFILES: Record<UserRole, AuthUser> = {
   Elder: {
@@ -767,25 +769,47 @@ export const EcosystemProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       }
 
       if (alertMessage) {
-        const smsItem: SmsAlertItem = {
-          id: 'sms-' + Date.now(),
-          recipient: 'Son (Amit +91 98100 12345) & Daughter (Neha)',
-          message: alertMessage,
-          timestamp: new Date().toLocaleTimeString(),
-          type: alertType,
-          vitalName,
-          vitalValue,
-          normalRange,
-          severity
-        };
+        const recipient = 'Son (Rahul +91 7597036780) & Daughter (Neha)';
 
-        setLatestSmsAlert(smsItem);
-        speakText(`Warning! ${vitalName} reading is high at ${vitalValue}. SMS emergency notification sent to family members.`);
-        
-        addNotification({
-          title: `📲 SMS SENT: ${vitalName}`,
-          message: alertMessage,
-          type: 'emergency'
+        // Dispatch to both Telegram Bot API and SMS Gateway/Native Protocol
+        Promise.all([
+          sendTelegramAlert({
+            message: alertMessage,
+            vitalName,
+            vitalValue,
+            recipient,
+            severity
+          }),
+          sendRealSms({
+            message: alertMessage,
+            phoneNumber: '+91 7597036780',
+            vitalName,
+            vitalValue
+          })
+        ]).then(([telegramRes, smsRes]) => {
+          const smsItem: SmsAlertItem = {
+            id: 'sms-' + Date.now(),
+            recipient,
+            message: alertMessage,
+            timestamp: new Date().toLocaleTimeString(),
+            type: alertType,
+            vitalName,
+            vitalValue,
+            normalRange,
+            severity,
+            telegramUrl: telegramRes.telegramUrl,
+            telegramSent: telegramRes.success,
+            smsUri: smsRes.smsUri
+          };
+
+          setLatestSmsAlert(smsItem);
+          speakText(`Warning! ${vitalName} reading is high at ${vitalValue}. SMS and Telegram emergency notifications sent to 7597036780.`);
+          
+          addNotification({
+            title: `📲 SMS & ✈️ TELEGRAM SENT: ${vitalName}`,
+            message: alertMessage,
+            type: 'emergency'
+          });
         });
       }
 

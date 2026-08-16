@@ -171,4 +171,7 @@ export interface SmsAlertItem {
   vitalValue: string;
   normalRange: string;
   severity: 'CRITICAL' | 'WARNING';
+  telegramUrl?: string;
+  telegramSent?: boolean;
+  smsUri?: string;
 }

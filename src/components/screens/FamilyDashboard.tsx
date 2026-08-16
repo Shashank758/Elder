@@ -7,7 +7,7 @@ export const FamilyDashboard: React.FC = () => {
 
   const familyMembers = [
     { name: 'Devendra', role: 'Grandpa (Monitored)', avatar: '👴', phone: '+91 98765 00000', active: true },
-    { name: 'Rahul', role: 'Son (Primary Guardian)', avatar: '👨', phone: '+91 98100 12345', active: false },
+    { name: 'Rahul', role: 'Son (Telegram Guardian)', avatar: '👨', phone: '+91 7597036780', active: false },
     { name: 'Neha', role: 'Daughter (Guardian)', avatar: '👩', phone: '+91 98765 43210', active: false },
     { name: 'Priya', role: 'Caregiver Nurse', avatar: '🩺', phone: '+91 98711 22334', active: false },
   ];
@@ -69,12 +69,27 @@ export const FamilyDashboard: React.FC = () => {
                 {!hrHigh && !bpHigh && !spo2Low && tempHigh && `High Fever (${watchData.temperature}°C)`}
               </h3>
               <p className="text-xs text-rose-200/90 mt-0.5">
-                Automated SMS alerts dispatched to Rahul (+91 98100 12345) & Neha (+91 98765 43210).
+                Automated SMS & Telegram alerts dispatched to Rahul (+91 7597036780) & Neha (+91 98765 43210).
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
+          <div className="flex flex-wrap items-center gap-2 self-end sm:self-auto shrink-0">
+            <a
+              href={`sms:7597036780?body=${encodeURIComponent(`🚨 ELDERGUARD EMERGENCY VITAL ALERT\nSenior: Devendra (78y)\nHR: ${watchData.heartRate} BPM | BP: ${watchData.systolicBp}/${watchData.diastolicBp} mmHg\nImmediate check required!`)}`}
+              className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md flex items-center gap-1.5 active:scale-95 transition-all"
+            >
+              <span>📱 Send SMS</span>
+            </a>
+            <button
+              onClick={() => {
+                const text = `🚨 *ELDERGUARD EMERGENCY ALERT*\n\nSenior Devendra's vital sign exceeded critical limit!\nHeart Rate: ${watchData.heartRate} BPM | BP: ${watchData.systolicBp}/${watchData.diastolicBp} mmHg\nLocation: Living Room\nImmediate check required!`;
+                window.open(`https://t.me/share/url?url=${encodeURIComponent('http://localhost:5173')}&text=${encodeURIComponent(text)}`, '_blank');
+              }}
+              className="px-3.5 py-2 rounded-xl bg-sky-600 hover:bg-sky-500 text-white font-bold text-xs shadow-md flex items-center gap-1.5 active:scale-95 transition-all"
+            >
+              <span>✈️ Telegram Alert</span>
+            </button>
             <button
               onClick={() => {
                 speakText("Calling Son Rahul...");
